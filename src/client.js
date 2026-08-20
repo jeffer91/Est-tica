@@ -16,6 +16,7 @@
 
   const cards = [...document.querySelectorAll('[data-treatment-card]')];
   const filterButtons = [...document.querySelectorAll('[data-filter]')];
+  const categoryJumps = [...document.querySelectorAll('[data-category-jump]')];
   const search = document.querySelector('#treatment-search');
   const emptyState = document.querySelector('#empty-state');
   let activeFilter = 'all';
@@ -33,12 +34,19 @@
     if (emptyState) emptyState.hidden = shown !== 0;
   }
 
-  filterButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      activeFilter = button.dataset.filter || 'all';
-      filterButtons.forEach(b => b.classList.toggle('is-active', b === button));
-      applyFilters();
+  function setFilter(filter) {
+    activeFilter = filter || 'all';
+    filterButtons.forEach(button => button.classList.toggle('is-active', button.dataset.filter === activeFilter));
+    applyFilters();
+  }
+
+  filterButtons.forEach(button => button.addEventListener('click', () => setFilter(button.dataset.filter)));
+  search?.addEventListener('input', applyFilters);
+
+  categoryJumps.forEach(tile => {
+    tile.addEventListener('click', () => {
+      setFilter(tile.dataset.categoryJump);
+      setTimeout(() => document.querySelector('#catalogo')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
     });
   });
-  search?.addEventListener('input', applyFilters);
 })();
